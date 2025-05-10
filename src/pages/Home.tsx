@@ -1,4 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
+import moment from 'moment';
+import { FaCheck } from 'react-icons/fa';
 import type { Partida } from '../types/Partida';
 import axios from 'axios';
 import type { Clube } from '../types/Clube';
@@ -131,36 +133,51 @@ const Home = () => {
   }
 
   return (
-    <div className="flex gap-4">
-      <div className="w-4/5 bg-secondary p-4 rounded-xl shadow-md">
+    <div className="flex gap-4 h-full overflow-hidden">
+      <div className="w-4/5 bg-secondary p-4 rounded-xl shadow-md flex flex-col">
         <h2 className="text-lg font-bold mb-2 text-accent">Lista de Partidas</h2>
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-left border-b border-primary">
-              <th className='text-contrast'>DATA</th>
-              <th className='text-contrast'>CAMPEONATO</th>
-              <th className='text-contrast'>CASA</th>
-              <th className='text-contrast'>PLACAR</th>
-              <th className='text-contrast'>FORA</th>
-              <th className='text-contrast'>PLACAR</th>
-            </tr>
-          </thead>
-          <tbody>
-            {partidas.map((p, i) => (
-              <tr key={i} className={`border-b border-primary ${getClasseCores(p.campeonato.id)}`}>
-                <td className='text-lightgray'>{p.data}</td>
-                <td className='text-lightgray'>{p.campeonato.nome}</td>
-                <td className='text-lightgray'>{p.emCasa ? p.clube.nome : p.adversario.nome}</td>
-                <td className='text-lightgray'>{p.emCasa ? p.golsClube : p.golsAdversario}</td>
-                <td className='text-lightgray'>{!p.emCasa ? p.clube.nome : p.adversario.nome}</td>
-                <td className='text-lightgray'>{!p.emCasa ? p.golsClube : p.golsAdversario}</td>
+        <div className="overflow-y-auto rounded-b-xl">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left border-b border-primary sticky top-0 bg-secondary">
+                <th className='text-contrast  pl-2'>DATA</th>
+                <th className='text-contrast'>CAMPEONATO</th>
+                <th className='text-contrast'>CASA</th>
+                <th className='text-contrast'>PLACAR</th>
+                <th className='text-contrast'>FORA</th>
+                <th className='text-contrast'>PLACAR</th>
+                <th className='text-contrast text-center'>RESULTADO</th>
+                <th className='text-contrast text-center'>PÊNALTIS</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {partidas.map((p, i) => (
+                <tr key={i} className={`border-b border-primary ${getClasseCores(p.campeonato.id)}`}>
+                  <td className='text-lightgray pl-2'>{moment(p.data).format('DD/MM/YYYY')}</td>
+                  <td className='text-lightgray'>{p.campeonato.nome}</td>
+                  <td className='text-lightgray'>{p.emCasa ? p.clube.nome : p.adversario.nome}</td>
+                  <td className='text-lightgray'>{p.emCasa ? p.golsClube : p.golsAdversario}</td>
+                  <td className='text-lightgray'>{!p.emCasa ? p.clube.nome : p.adversario.nome}</td>
+                  <td className='text-lightgray'>{!p.emCasa ? p.golsClube : p.golsAdversario}</td>
+                  <td>
+                    <div className={`w-4 h-4 text-center rounded-full mx-auto ${p.golsClube === p.golsAdversario
+                      ? 'bg-yellow-100'
+                      : (p.emCasa ? p.golsClube > p.golsAdversario : p.golsAdversario > p.golsClube)
+                        ? 'bg-green-500'
+                        : 'bg-red-500'
+                      }`} />
+                  </td>
+                  <td className='text-center'>
+                    {p.tevePenaltis && <FaCheck className="text-green-500 inline" />}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <div className="w-1/5 bg-secondary p-4 rounded-xl shadow-md">
+      <div className="w-1/5 bg-secondary p-4 rounded-xl shadow-md max-h-fit">
         <h2 className="text-lg font-bold mb-4 text-accent">Nova Partida</h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-3 text-lightgray">
           <input name="data" type="date" value={form?.data} onChange={handleChange} className="p-2 rounded bg-inputBg placeholder-lightgray  text-contrast 

@@ -5,7 +5,7 @@ import AppRoutes from './routes';
 function App() {
   return (
     <BrowserRouter>
-      <div className="flex">
+      <div className="flex h-screen">
         <Sidebar />
         <main className="flex-1 p-6 bg-primary min-h-screen">
           <AppRoutes />
