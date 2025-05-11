@@ -1,19 +1,20 @@
 import { useState, useEffect } from 'react';
 import { FaTrash } from 'react-icons/fa';
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from 'react-hot-toast';
 
-import axios from 'axios';
-import type { Campeonato } from '../types/Campeonato';
+import type { CampeonatoDetail } from '../types/Campeonato';
+import { CampeonatoService } from '../services/CampeonatoService';
 
 const INITIAL_FORM = {
   nome: '',
   tipo: '',
-  emblema: '',
+  emblema: null as File | null,
 };
 
 const Home = () => {
 
-  const [campeonatos, setCampeonatos] = useState<Campeonato[]>([]);
+  const [campeonatos, setCampeonatos] = useState<CampeonatoDetail[]>([]);
   const [form, setForm] = useState(INITIAL_FORM);
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -21,8 +22,8 @@ const Home = () => {
 
   useEffect(() => {
     const buscarCampeonatos = async () => {
-      const response = await axios.get('http://localhost:8080/campeonatos');
-      setCampeonatos(response.data);
+      const response = await CampeonatoService.getAllDetails();
+      setCampeonatos(response);
     };
 
     buscarCampeonatos();
@@ -31,20 +32,19 @@ const Home = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const payload = {
-      nome: form.nome,
-      tipo: form.tipo,
-      emblema: form.emblema,
-    };
+    let formData = new FormData();
+    formData.append('nome', form.nome);
+    formData.append('tipo', form.tipo);
+    if (form.emblema) {
+      formData.append('emblema', form.emblema);
+    }
 
     try {
-      const response = await axios.post('http://localhost:8080/campeonatos', payload);
-      const campeonatoNovo: Campeonato = response.data;
-      alert('Campeonato cadastrado com sucesso!');
+      const response = await CampeonatoService.create(formData);
+      toast.success('Campeonato cadastrado com sucesso!');
       setForm(INITIAL_FORM);
-      setCampeonatos((prev) => ([...prev, campeonatoNovo]));
+      setCampeonatos((prev) => ([...prev, response]));
     } catch (error) {
-      alert('Erro ao cadastrar campeonato');
       console.error(error);
     }
   };
@@ -54,14 +54,14 @@ const Home = () => {
     setShowModal(true);
   };
 
-
   const handleDelete = async () => {
     if (selectedId === null) return;
     try {
-      await axios.delete(`http://localhost:8080/campeonatos/${selectedId}`);
+      await CampeonatoService.delete(selectedId);
       setCampeonatos(campeonatos
         .filter(c => c.id !== selectedId));
-    } catch (error) {
+      toast.success('Campeonato excluído com sucesso!');
+    } catch (error: any) {
       console.error("Erro ao excluir:", error);
     } finally {
       setSelectedId(null);
@@ -80,15 +80,10 @@ const Home = () => {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = (reader.result as string).split(',')[1];
-        setForm(prev => ({
-          ...prev,
-          emblema: `${base64String}`,
-        }));
-      };
-      reader.readAsDataURL(file);
+      setForm(prev => ({
+        ...prev,
+        emblema: file,
+      }));
     }
   };
 
@@ -96,15 +91,10 @@ const Home = () => {
     e.preventDefault();
     const file = e.dataTransfer.files?.[0];
     if (file && file.type === 'image/png') {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = (reader.result as string).split(',')[1];
-        setForm(prev => ({
-          ...prev,
-          emblema: `${base64String}`,
-        }));
-      };
-      reader.readAsDataURL(file);
+      setForm(prev => ({
+        ...prev,
+        emblema: file,
+      }));
     }
   };
 
@@ -205,7 +195,7 @@ const Home = () => {
 
           {form.emblema && (
             <img
-              src={`data:image/png;base64,${form.emblema}`}
+              src={URL.createObjectURL(form.emblema)}
               alt="Pré-visualização do Emblema"
               className="w-32 h-32 object-contain mx-auto rounded-lg"
             />
@@ -255,7 +245,6 @@ const Home = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
     </div>
   );
 };
