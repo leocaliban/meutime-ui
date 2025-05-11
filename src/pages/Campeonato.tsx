@@ -98,12 +98,58 @@ const Home = () => {
     }
   };
 
-  function getClasseCores(campeonatoId: number) {
+  function getClasseBackground(campeonatoId: number) {
     switch (campeonatoId) {
       case 1:
-        return 'bg-one-primaryDark hover:bg-one-secondaryNormal';
+        return 'bg-two-primaryDark hover:bg-two-secondaryNormal';
       case 2:
+        return 'bg-carabao-primaryDark hover:bg-carabao-secondaryNormal';
+      case 3:
+        return 'bg-bsm-primaryDark hover:bg-bsm-secondaryNormal';
+      case 4:
         return 'bg-facup-primaryDark hover:bg-facup-secondaryNormal';
+      case 5:
+        return '';
+      case 6:
+        return '';
+      default:
+        return '';
+    }
+  };
+
+  function getClasseText(campeonatoId: number) {
+    switch (campeonatoId) {
+      case 1:
+        return 'text-two-primaryNormal';
+      case 2:
+        return '';
+      case 3:
+        return '';
+      case 4:
+        return 'text-secondary';
+      case 5:
+        return '';
+      case 6:
+        return '';
+      default:
+        return '';
+    }
+  };
+
+  function getClasseIcon(campeonatoId: number) {
+    switch (campeonatoId) {
+      case 1:
+        return 'text-red-800 cursor-pointer hover:text-red-950 inline';
+      case 2:
+        return '';
+      case 3:
+        return '';
+      case 4:
+        return 'text-red-800 cursor-pointer hover:text-red-950 inline';
+      case 5:
+        return '';
+      case 6:
+        return '';
       default:
         return '';
     }
@@ -117,7 +163,7 @@ const Home = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left border-b border-primary sticky top-0 bg-secondary">
-                <th className='text-contrast  pl-2'></th>
+                <th className='text-contrast pl-2'></th>
                 <th className='text-contrast text-center'>NOME</th>
                 <th className='text-contrast text-center'>TIPO</th>
                 <th className='text-contrast text-center'></th>
@@ -125,19 +171,19 @@ const Home = () => {
             </thead>
             <tbody>
               {campeonatos.map((c, i) => (
-                <tr key={i} className={`border-b border-primary ${getClasseCores(c.id)}`}>
-                  <td className='text-lightgray pl-2 w-20'>
+                <tr key={i} className={`border-b border-primary ${getClasseBackground(c.id)}`}>
+                  <td className='text-lightgray pl-2 py-2 w-20'>
                     <img
                       src={`data:image/png;base64,${c.emblema}`}
                       alt="Emblema"
-                      className="h-10 w-10 object-contain mx-auto"
+                      className="h-12 w-12 object-contain mx-auto"
                     />
                   </td>
-                  <td className='text-lightgray text-center'>{c.nome}</td>
-                  <td className='text-lightgray text-center capitalize'>{c.tipo}</td>
-                  <td className='text-lightgray text-center capitalize'>
+                  <td className={`text-lightgray ${getClasseText(c.id)} text-center`}>{c.nome}</td>
+                  <td className={`text-lightgray ${getClasseText(c.id)} text-center capitalize`}>{c.tipo}</td>
+                  <td className="text-center">
                     <FaTrash
-                      className="text-red-500 cursor-pointer hover:text-red-700 inline"
+                      className={`text-red-500 cursor-pointer hover:text-red-700 inline ${getClasseIcon(c.id)}`}
                       onClick={() => confirmDelete(c.id)}
                       title="Excluir"
                     />
