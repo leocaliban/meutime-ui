@@ -18,10 +18,28 @@ export default {
           secondaryLight: '#E2E3E3',
         },
         facup: {
-          primaryNormal: '#D01821',
-          primaryDark: '#810006',
-          secondaryNormal: '#A80911',
-          secondaryLight: '#FB6D74',
+          primaryNormal: '#E7E7E7',
+          primaryDark: '#8D8C8C',
+          secondaryNormal: '#BABABA',
+          secondaryLight: '#FFFFFF',
+        },
+        two: {
+          primaryNormal: '#F4CCCC',
+          primaryDark: '#B06767',
+          secondaryNormal: '#D19797',
+          secondaryLight: '#FFFBFB',
+        },
+        carabao: {
+          primaryNormal: '#008E58',
+          primaryDark: '#005837',
+          secondaryNormal: '#007448',
+          secondaryLight: '#37B082',
+        },
+        bsm: {
+          primaryNormal: '#013E74',
+          primaryDark: '#001D37',
+          secondaryNormal: '#012F58',
+          secondaryLight: '#045FB1',
         }
       },
     },
