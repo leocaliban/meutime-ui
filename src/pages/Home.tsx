@@ -19,7 +19,7 @@ const INITIAL_FORM = {
   golsPenaltisAdversario: '',
 };
 
-const ID_MEU_CLUBE = 3;
+const ID_MEU_CLUBE = 1;
 
 const Home = () => {
   const [partidas, setPartidas] = useState<Partida[]>([]);
@@ -121,16 +121,24 @@ const Home = () => {
     }));
   };
 
-  function getClasseCores(campeonatoId: number) {
+  function getClasseBackground(campeonatoId: number) {
     switch (campeonatoId) {
       case 1:
-        return 'bg-one-primaryDark hover:bg-one-secondaryNormal';
+        return 'bg-two-primaryDark hover:bg-two-secondaryNormal';
       case 2:
+        return 'bg-carabao-primaryDark hover:bg-carabao-secondaryNormal';
+      case 3:
+        return 'bg-bsm-primaryDark hover:bg-bsm-secondaryNormal';
+      case 4:
         return 'bg-facup-primaryDark hover:bg-facup-secondaryNormal';
+      case 5:
+        return '';
+      case 6:
+        return '';
       default:
         return '';
     }
-  }
+  };
 
   return (
     <div className="flex gap-4 h-full overflow-hidden">
@@ -152,7 +160,7 @@ const Home = () => {
             </thead>
             <tbody>
               {partidas.map((p, i) => (
-                <tr key={i} className={`border-b border-primary ${getClasseCores(p.campeonato.id)}`}>
+                <tr key={i} className={`border-b border-primary ${getClasseBackground(p.campeonato.id)}`}>
                   <td className='text-lightgray pl-2'>{moment(p.data).format('DD/MM/YYYY')}</td>
                   <td className='text-lightgray'>{p.campeonato.nome}</td>
                   <td className='text-lightgray'>{p.emCasa ? p.clube.nome : p.adversario.nome}</td>
@@ -162,7 +170,7 @@ const Home = () => {
                   <td>
                     <div className={`w-4 h-4 text-center rounded-full mx-auto ${p.golsClube === p.golsAdversario
                       ? 'bg-yellow-100'
-                      : (p.emCasa ? p.golsClube > p.golsAdversario : p.golsAdversario > p.golsClube)
+                      : (p.emCasa ? p.golsClube > p.golsAdversario : p.golsClube > p.golsAdversario)
                         ? 'bg-green-500'
                         : 'bg-red-500'
                       }`} />
