@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import moment from 'moment';
-import { FaCheck } from 'react-icons/fa';
 import type { Partida } from '../types/Partida';
 import axios from 'axios';
 import type { Clube } from '../types/Clube';
 import type { Campeonato } from '../types/Campeonato';
+import PenaltisTooltip from '../components/PenaltisTooltip';
 
 const INITIAL_FORM = {
   data: '',
@@ -176,7 +176,7 @@ const Home = () => {
                       }`} />
                   </td>
                   <td className='text-center'>
-                    {p.tevePenaltis && <FaCheck className="text-green-500 inline" />}
+                    {p.tevePenaltis && <PenaltisTooltip p={p} />}
                   </td>
                 </tr>
               ))}
