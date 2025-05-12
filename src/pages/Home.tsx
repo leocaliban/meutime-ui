@@ -1,10 +1,18 @@
 import { useState, useEffect } from 'react';
+
 import moment from 'moment';
-import type { Partida } from '../types/Partida';
-import axios from 'axios';
-import type { Clube } from '../types/Clube';
-import type { Campeonato } from '../types/Campeonato';
+import { toast } from 'react-hot-toast';
+
 import PenaltisTooltip from '../components/PenaltisTooltip';
+
+import { ClubeService } from '../services/ClubeService';
+import { PartidaService } from '../services/PartidaService';
+import { CampeonatoService } from '../services/CampeonatoService';
+
+import type { Clube } from '../types/Clube';
+import type { Partida } from '../types/Partida';
+import type { Campeonato } from '../types/Campeonato';
+import { BASE_URL } from '../services/Resources';
 
 const INITIAL_FORM = {
   data: '',
@@ -34,26 +42,24 @@ const Home = () => {
 
   useEffect(() => {
     const buscarPartidas = async () => {
-      const response = await axios.get('http://localhost:8080/partidas', {
-        headers: {
-          'Accept': 'video/webm,video/ogg,video/*;q=0.9,application/ogg;q=0.7,audio/*;q=0.6,*/*;q=0.5',
-        }
-      });
-      setPartidas(response.data);
+      const response = await PartidaService.getAll();
+      setPartidas(response);
     };
-    const buscarClubes = async () => {
-      const response = await axios.get('http://localhost:8080/clubes');
-      setClubes(response.data);
-      iniciarMeuClube(response.data);
-    };
-    const buscarCampeonatos = async () => {
-      const response = await axios.get('http://localhost:8080/campeonatos');
-      setCampeonatos(response.data);
-    };
+
     buscarPartidas();
     buscarClubes();
     buscarCampeonatos();
   }, []);
+
+  const buscarClubes = async () => {
+    const response = await ClubeService.getAll();
+    setClubes(response);
+    iniciarMeuClube(response);
+  };
+  const buscarCampeonatos = async () => {
+    const response = await CampeonatoService.getAll();
+    setCampeonatos(response);
+  };
 
   const iniciarMeuClube = (clubes: Clube[]) => {
     const meuClube = clubes.find((c) => c.id === ID_MEU_CLUBE);
@@ -85,11 +91,12 @@ const Home = () => {
     };
 
     try {
-      await axios.post('http://localhost:8080/partidas', payload);
-      alert('Partida cadastrada com sucesso!');
+      const response = await PartidaService.create(payload);
+      toast.success('Partida cadastrada com sucesso!');
       setForm(INITIAL_FORM);
+      setNomeAdversarioInput('');
+      setPartidas((prev) => ([...prev, response]));
     } catch (error) {
-      alert('Erro ao cadastrar partida');
       console.error(error);
     }
   };
@@ -121,25 +128,6 @@ const Home = () => {
     }));
   };
 
-  function getClasseBackground(campeonatoId: number) {
-    switch (campeonatoId) {
-      case 1:
-        return 'bg-two-primaryDark hover:bg-two-secondaryNormal';
-      case 2:
-        return 'bg-carabao-primaryDark hover:bg-carabao-secondaryNormal';
-      case 3:
-        return 'bg-bsm-primaryDark hover:bg-bsm-secondaryNormal';
-      case 4:
-        return 'bg-facup-primaryDark hover:bg-facup-secondaryNormal';
-      case 5:
-        return '';
-      case 6:
-        return '';
-      default:
-        return '';
-    }
-  };
-
   return (
     <div className="flex gap-4 h-full overflow-hidden">
       <div className="w-4/5 bg-secondary p-4 rounded-xl shadow-md flex flex-col">
@@ -160,12 +148,41 @@ const Home = () => {
             </thead>
             <tbody>
               {partidas.map((p, i) => (
-                <tr key={i} className={`border-b border-primary ${getClasseBackground(p.campeonato.id)}`}>
+                <tr key={i} className='border-b border-primary'>
                   <td className='text-lightgray pl-2'>{moment(p.data).format('DD/MM/YYYY')}</td>
-                  <td className='text-lightgray'>{p.campeonato.nome}</td>
-                  <td className='text-lightgray'>{p.emCasa ? p.clube.nome : p.adversario.nome}</td>
+
+                  <td className='text-lightgray'>
+                    <div className="flex flex-row">
+                      <img
+                        src={`${BASE_URL}/campeonatos/${p.campeonato.id}/emblema`}
+                        alt="Emblema"
+                        className="h-6 w-6 object-contain mr-1"
+                      />
+                      <span>{p.campeonato.nome}</span>
+                    </div>
+                  </td>
+
+                  <td className='text-lightgray'>
+                    <div className="flex flex-row">
+                      <img
+                        src={`${BASE_URL}/clubes/${p.emCasa ? p.clube.id : p.adversario.id}/emblema`}
+                        alt="Emblema"
+                        className="h-6 w-6 object-contain mr-1"
+                      />
+                      <span>{p.emCasa ? p.clube.nome : p.adversario.nome}</span>
+                    </div>
+                  </td>
                   <td className='text-lightgray'>{p.emCasa ? p.golsClube : p.golsAdversario}</td>
-                  <td className='text-lightgray'>{!p.emCasa ? p.clube.nome : p.adversario.nome}</td>
+                  <td className='text-lightgray'>
+                    <div className="flex flex-row">
+                      <img
+                        src={`${BASE_URL}/clubes/${!p.emCasa ? p.clube.id : p.adversario.id}/emblema`}
+                        alt="Emblema"
+                        className="h-6 w-6 object-contain mr-1"
+                      />
+                      <span>{!p.emCasa ? p.clube.nome : p.adversario.nome}</span>
+                    </div>
+                  </td>
                   <td className='text-lightgray'>{!p.emCasa ? p.golsClube : p.golsAdversario}</td>
                   <td>
                     <div className={`w-4 h-4 text-center rounded-full mx-auto ${p.golsClube === p.golsAdversario
@@ -204,6 +221,7 @@ const Home = () => {
               type="text"
               placeholder="Clube principal"
               value={nomeClubeInput}
+              disabled={true}
               onChange={(e) => {
                 setCampoAtivo('clube');
                 filtrarClubes(e.target.value);
