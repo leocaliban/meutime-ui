@@ -19,13 +19,13 @@ export default {
         },
         facup: {
           primaryNormal: '#E7E7E7',
-          primaryDark: '#8D8C8C',
+          primaryDark: '#2B302E',
           secondaryNormal: '#BABABA',
           secondaryLight: '#FFFFFF',
         },
         two: {
           primaryNormal: '#F4CCCC',
-          primaryDark: '#B06767',
+          primaryDark: '#752626',
           secondaryNormal: '#D19797',
           secondaryLight: '#FFFBFB',
         },

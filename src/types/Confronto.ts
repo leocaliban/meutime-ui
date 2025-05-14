@@ -7,5 +7,5 @@ export interface Confronto {
   derrotas: number;
   empates: number;
   decisoesPorPenaltis: number;
-  partidas: Partida;
+  partidas: Partida[];
 }
