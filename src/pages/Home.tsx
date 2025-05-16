@@ -164,8 +164,8 @@ const Home = () => {
                 <tr
                   key={i}
                   className={`border-b border-primary cursor-pointer transition-colors border-l-4 ${partidaSelecionada?.id === p.id
-                      ? 'border-blue-500 bg-blue-100 dark:bg-blue-900'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-800 border-l-transparent'
+                    ? 'border-blue-700 bg-blue-100 dark:bg-blue-900'
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-800 border-l-transparent'
                     }`}
                   onClick={async () => buscarConfrontos(p)}
                 >

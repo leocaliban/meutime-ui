@@ -40,6 +40,12 @@ export default {
           primaryDark: '#001D37',
           secondaryNormal: '#012F58',
           secondaryLight: '#045FB1',
+        },
+        friendly: {
+          primaryNormal: '#FCE8B2',
+          primaryDark: '#AD9043',
+          secondaryNormal: '#D5BC77',
+          secondaryLight: '#FFF3D4',
         }
       },
     },

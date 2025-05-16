@@ -34,7 +34,7 @@ const ResumoConfronto = ({ partida, confronto }: Props) => {
       case 4:
         return 'bg-gradient-to-b from-secondary to-facup-primaryDark';
       case 5:
-        return '';
+        return 'bg-gradient-to-b from-secondary to-friendly-primaryDark';
       case 6:
         return '';
       default:
