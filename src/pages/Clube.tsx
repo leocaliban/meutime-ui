@@ -3,30 +3,29 @@ import { FaTrash } from 'react-icons/fa';
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from 'react-hot-toast';
 
-import type { CampeonatoDetail } from '../types/Campeonato';
-import { CampeonatoService } from '../services/CampeonatoService';
+import type { ClubeDetails } from '../types/Clube';
+import { ClubeService } from '../services/ClubeService';
 
 const INITIAL_FORM = {
   nome: '',
-  tipo: '',
   emblema: null as File | null,
 };
 
 const Home = () => {
 
-  const [campeonatos, setCampeonatos] = useState<CampeonatoDetail[]>([]);
+  const [clubes, setClubes] = useState<ClubeDetails[]>([]);
   const [form, setForm] = useState(INITIAL_FORM);
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    const buscarCampeonatos = async () => {
-      const response = await CampeonatoService.getAllDetails();
-      setCampeonatos(response);
+    const buscarClubes = async () => {
+      const response = await ClubeService.getAllDetails();
+      setClubes(response);
     };
 
-    buscarCampeonatos();
+    buscarClubes();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,16 +33,15 @@ const Home = () => {
 
     let formData = new FormData();
     formData.append('nome', form.nome);
-    formData.append('tipo', form.tipo);
     if (form.emblema) {
       formData.append('emblema', form.emblema);
     }
 
     try {
-      const response = await CampeonatoService.create(formData);
-      toast.success('Campeonato cadastrado com sucesso!');
+      const response = await ClubeService.create(formData);
+      toast.success('Clube cadastrado com sucesso!');
       setForm(INITIAL_FORM);
-      setCampeonatos((prev) => ([...prev, response]));
+      setClubes((prev) => ([...prev, response]));
     } catch (error) {
       console.error(error);
     }
@@ -57,10 +55,10 @@ const Home = () => {
   const handleDelete = async () => {
     if (selectedId === null) return;
     try {
-      await CampeonatoService.delete(selectedId);
-      setCampeonatos(campeonatos
+      await ClubeService.delete(selectedId);
+      setClubes(clubes
         .filter(c => c.id !== selectedId));
-      toast.success('Campeonato excluído com sucesso!');
+      toast.success('Clube excluído com sucesso!');
     } catch (error: any) {
       console.error("Erro ao excluir:", error);
     } finally {
@@ -98,80 +96,23 @@ const Home = () => {
     }
   };
 
-  function getClasseBackground(campeonatoId: number) {
-    switch (campeonatoId) {
-      case 1:
-        return 'bg-two-primaryDark hover:bg-two-secondaryNormal';
-      case 2:
-        return 'bg-carabao-primaryDark hover:bg-carabao-secondaryNormal';
-      case 3:
-        return 'bg-bsm-primaryDark hover:bg-bsm-secondaryNormal';
-      case 4:
-        return 'bg-facup-primaryDark hover:bg-facup-secondaryNormal';
-      case 5:
-        return '';
-      case 6:
-        return '';
-      default:
-        return '';
-    }
-  };
-
-  function getClasseText(campeonatoId: number) {
-    switch (campeonatoId) {
-      case 1:
-        return 'text-two-primaryNormal';
-      case 2:
-        return '';
-      case 3:
-        return '';
-      case 4:
-        return 'text-secondary';
-      case 5:
-        return '';
-      case 6:
-        return '';
-      default:
-        return '';
-    }
-  };
-
-  function getClasseIcon(campeonatoId: number) {
-    switch (campeonatoId) {
-      case 1:
-        return 'text-red-800 cursor-pointer hover:text-red-950 inline';
-      case 2:
-        return '';
-      case 3:
-        return '';
-      case 4:
-        return 'text-red-800 cursor-pointer hover:text-red-950 inline';
-      case 5:
-        return '';
-      case 6:
-        return '';
-      default:
-        return '';
-    }
-  };
 
   return (
     <div className="flex gap-4 h-full overflow-hidden">
       <div className="w-4/5 bg-secondary p-4 rounded-xl shadow-md flex flex-col">
-        <h2 className="text-lg font-bold mb-2 text-accent">Lista de Campeonatos</h2>
+        <h2 className="text-lg font-bold mb-2 text-accent">Lista de Clubes</h2>
         <div className="overflow-y-auto rounded-b-xl">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left border-b border-primary sticky top-0 bg-secondary">
                 <th className='text-contrast pl-2'></th>
                 <th className='text-contrast text-center'>NOME</th>
-                <th className='text-contrast text-center'>TIPO</th>
                 <th className='text-contrast text-center'></th>
               </tr>
             </thead>
             <tbody>
-              {campeonatos.map((c, i) => (
-                <tr key={i} className={`border-b border-primary ${getClasseBackground(c.id)}`}>
+              {clubes.map((c, i) => (
+                <tr key={i} className="border-b border-primary">
                   <td className='text-lightgray pl-2 py-2 w-20'>
                     <img
                       src={`data:image/png;base64,${c.emblema}`}
@@ -179,11 +120,10 @@ const Home = () => {
                       className="h-12 w-12 object-contain mx-auto"
                     />
                   </td>
-                  <td className={`text-lightgray ${getClasseText(c.id)} text-center`}>{c.nome}</td>
-                  <td className={`text-lightgray ${getClasseText(c.id)} text-center capitalize`}>{c.tipo}</td>
+                  <td className="text-lightgray text-center">{c.nome}</td>
                   <td className="text-center">
                     <FaTrash
-                      className={`text-red-500 cursor-pointer hover:text-red-700 inline ${getClasseIcon(c.id)}`}
+                      className="text-red-500 cursor-pointer hover:text-red-700 inline"
                       onClick={() => confirmDelete(c.id)}
                       title="Excluir"
                     />
@@ -196,32 +136,18 @@ const Home = () => {
       </div>
 
       <div className="w-1/5 bg-secondary p-4 rounded-xl shadow-md max-h-fit">
-        <h2 className="text-lg font-bold mb-4 text-accent">Novo Campeonato</h2>
+        <h2 className="text-lg font-bold mb-4 text-accent">Novo Clube</h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-3 text-lightgray">
           <input
             name="nome"
             type="text"
-            placeholder="Nome do campeonato"
+            placeholder="Nome do clube"
             value={form.nome}
             onChange={handleChange}
             className="p-2 rounded bg-inputBg placeholder-lightgray text-contrast
         focus:outline-none focus:ring-2 focus:ring-focusBorder hover:ring hover:ring-accent transition"
             required
           />
-
-          <select
-            name="tipo"
-            value={form.tipo}
-            onChange={handleChange}
-            className="p-2 rounded bg-inputBg text-contrast placeholder-lightgray
-        focus:outline-none focus:ring-2 focus:ring-accent hover:ring hover:ring-accent transition"
-            required
-          >
-            <option value="">Selecione o tipo</option>
-            <option value="LIGA">Liga</option>
-            <option value="COPA">Copa</option>
-            <option value="AMISTOSO">Amistosos</option>
-          </select>
 
           <div
             onDrop={handleDrop}
@@ -252,7 +178,7 @@ const Home = () => {
             type="submit"
             className="bg-primary mt-2 text-white py-2 rounded hover:bg-accent transition"
           >
-            Salvar Campeonato
+            Salvar Clube
           </button>
         </form>
       </div>
@@ -273,7 +199,7 @@ const Home = () => {
               transition={{ duration: 0.2 }}
             >
               <h2 className="text-lg font-semibold mb-4  text-accent">Confirmar exclusão</h2>
-              <p className="mb-6 text-lightgray">Tem certeza que deseja excluir este campeonato?</p>
+              <p className="mb-6 text-lightgray">Tem certeza que deseja excluir este clube?</p>
               <div className="flex justify-center gap-4">
                 <button
                   className="px-4 py-2 bg-lightgray text-primary rounded-md hover:bg-gray-400 transition"

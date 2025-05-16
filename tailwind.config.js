@@ -19,13 +19,13 @@ export default {
         },
         facup: {
           primaryNormal: '#E7E7E7',
-          primaryDark: '#8D8C8C',
+          primaryDark: '#2B302E',
           secondaryNormal: '#BABABA',
           secondaryLight: '#FFFFFF',
         },
         two: {
           primaryNormal: '#F4CCCC',
-          primaryDark: '#B06767',
+          primaryDark: '#752626',
           secondaryNormal: '#D19797',
           secondaryLight: '#FFFBFB',
         },
@@ -40,6 +40,12 @@ export default {
           primaryDark: '#001D37',
           secondaryNormal: '#012F58',
           secondaryLight: '#045FB1',
+        },
+        friendly: {
+          primaryNormal: '#FCE8B2',
+          primaryDark: '#AD9043',
+          secondaryNormal: '#D5BC77',
+          secondaryLight: '#FFF3D4',
         }
       },
     },
