@@ -220,6 +220,7 @@ const Home = () => {
             <option value="">Selecione o tipo</option>
             <option value="LIGA">Liga</option>
             <option value="COPA">Copa</option>
+            <option value="AMISTOSO">Amistosos</option>
           </select>
 
           <div

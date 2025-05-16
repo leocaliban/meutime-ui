@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { applyDefaultInterceptors } from './Interceptor';
 
-const BASE_URL = 'http://localhost:8080';
+export const BASE_URL = 'http://localhost:8080';
 
 
 export const CampeonatosResource = applyDefaultInterceptors(axios.create({
