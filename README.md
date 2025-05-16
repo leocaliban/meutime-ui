@@ -52,3 +52,7 @@ export default tseslint.config({
   },
 })
 ```
+
+---
+
+v1.0.0
